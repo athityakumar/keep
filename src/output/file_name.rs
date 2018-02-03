@@ -7,6 +7,10 @@ use output::escape;
 use output::cell::TextCellContents;
 use output::render::FiletypeColours;
 
+use std::io::prelude::*;
+use std::env;
+extern crate yaml_rust;
+use self::yaml_rust::{YamlLoader, YamlEmitter};
 
 /// Basically a file name factory.
 #[derive(Debug)]
@@ -24,6 +28,7 @@ impl FileStyle {
     /// Create a new `FileName` that prints the given file’s name, painting it
     /// with the remaining arguments.
     pub fn for_file<'a, 'dir, C: Colours>(&'a self, file: &'a File<'dir>, colours: &'a C) -> FileName<'a, 'dir, C> {
+
         FileName {
             file, colours,
             link_style: LinkStyle::JustFilenames,
@@ -228,7 +233,160 @@ impl<'a, 'dir, C: Colours> FileName<'a, 'dir, C> {
     fn coloured_file_name<'unused>(&self) -> Vec<ANSIString<'unused>> {
         let file_style = self.style();
         let mut bits = Vec::new();
-        escape(self.file.name.clone(), &mut bits, file_style, self.colours.control_char());
+
+        // let mut fs = File::open("/Users/athityakumar/Documents/GitHub/athityakumar/colorls/lib/yaml/files.yaml");
+
+        // let docs = YamlLoader::load_from_str(fs).unwrap();
+        // let doc = &docs[0];
+
+        let words = self.file.name.clone();
+        let words: Vec<&str> = words.split(".").collect();
+        let format = words.last();
+        // let words_size = words.len();
+        // println!("{:?}", words.last());
+
+        // doc["foo"][0].as_str().unwrap()
+
+        let mut icon = "\u{e626}  ".to_string();
+
+        if (self.file.is_directory()) {
+            icon = "\u{f115}  ".to_string();            
+        } else if ([Some(&"zip"), Some(&"tar"), Some(&"gz"), Some(&"rar")].contains(&format)) {
+            icon = "\u{f410}  ".to_string();
+        } else if ([Some(&"yml"), Some(&"yaml")].contains(&format)) {
+            icon = "\u{f481}  ".to_string();
+        } else if ([Some(&"xml"), Some(&"xul")].contains(&format)) {
+            icon = "\u{e619}  ".to_string();
+        } else if ([Some(&"xls"), Some(&"xlsx"), Some(&"csv"), Some(&"gsheet")].contains(&format)) {
+            icon = "\u{f17a}  ".to_string();
+        } else if ([Some(&"ini"), Some(&"exe"), Some(&"bat")].contains(&format)) {
+            icon = "\u{f481}  ".to_string();
+        } else if ([Some(&"webm"), Some(&"ogv"), Some(&"mp4"), Some(&"mkv"), Some(&"avi")].contains(&format)) {
+            icon = "\u{f03d}  ".to_string();
+        } else if ([Some(&"styl"), Some(&"stylus"), Some(&"tex")].contains(&format)) {
+            icon = "\u{e600}  ".to_string();
+        } else if ([Some(&"zshrc"), Some(&"zsh-theme"), Some(&"zsh"), Some(&"sh"), Some(&"fish"), Some(&"bashrc"), Some(&"bash_profile"), Some(&"bash_history"), Some(&"bash")].contains(&format)) {
+            icon = "\u{f489}  ".to_string();
+        } else if ([Some(&"rb"), Some(&"ru"), Some(&"rspec"), Some(&"rspec_status"), Some(&"rspec_parallel"), Some(&"Rakefile"), Some(&"Procfile"), Some(&"lock"), Some(&"gemspec"), Some(&"Gemfile"), Some(&"Guardfile")].contains(&format)) {
+            icon = "\u{e21e}  ".to_string();
+        } else if ([Some(&"bmp"), Some(&"gif"), Some(&"ico"), Some(&"png"), Some(&"jpg"), Some(&"jpeg"), Some(&"svg")].contains(&format)) {
+            icon = "\u{f1c5}  ".to_string();
+        } else if ([Some(&"eot"), Some(&"otf"), Some(&"ttf"), Some(&"woff"), Some(&"woff2")].contains(&format)) {
+            icon = "\u{f031}  ".to_string();
+        } else if ([Some(&"md"), Some(&"txt"), Some(&"rst"), Some(&"rdoc")].contains(&format)) {
+            icon = "\u{f48a}  ".to_string();
+        } else if ([Some(&"erb"), Some(&"slim")].contains(&format)) {
+            icon = "\u{e73b}  ".to_string();
+        } else if ([Some(&"RData"), Some(&"rds"), Some(&"r")].contains(&format)) {
+            icon = "\u{f25d}  ".to_string();
+        } else if ([Some(&"py"), Some(&"pyc")].contains(&format)) {
+            icon = "\u{e606}  ".to_string();
+        } else if ([Some(&"ppt"), Some(&"pptx"), Some(&"gslides")].contains(&format)) {
+            icon = "\u{f1c4}  ".to_string();
+        } else if ([Some(&"git"), Some(&"gitignore"), Some(&"gitconfig"), Some(&"gitignore_global")].contains(&format)) {
+            icon = "\u{f1d3}  ".to_string();
+        } else if ([Some(&"apk"), Some(&"gradle")].contains(&format)) {
+            icon = "\u{e70e}  ".to_string();
+        } else if ([Some(&"ds_store"), Some(&"localized")].contains(&format)) {
+            icon = "\u{f179}  ".to_string();
+        } else if ([Some(&"mp3"), Some(&"ogg")].contains(&format)) {
+            icon = "\u{f001}  ".to_string();
+        } else if ([Some(&"doc"), Some(&"docx"), Some(&"gdoc")].contains(&format)) {
+            icon = "\u{f1c2}  ".to_string();
+        } else if ([Some(&"tsx"), Some(&"jsx")].contains(&format)) {
+            icon = "\u{e7ba}  ".to_string();
+        } else if ([Some(&"properties"), Some(&"json")].contains(&format)) {
+            icon = "\u{e60b}  ".to_string();
+        } else if ([Some(&"jar"), Some(&"java")].contains(&format)) {
+            icon = "\u{e204}  ".to_string();
+        } else if ([Some(&"lhs"), Some(&"hs")].contains(&format)) {
+            icon = "\u{e777}  ".to_string();
+        } else if ([Some(&"mobi"), Some(&"ebook"), Some(&"epub")].contains(&format)) {
+            icon = "\u{e28b}  ".to_string();
+        } else if ([Some(&"scss"), Some(&"css")].contains(&format)) {
+            icon = "\u{e749}  ".to_string();
+        } else if ([Some(&"editorconfig"), Some(&"conf")].contains(&format)) {
+            icon = "\u{e615}  ".to_string();
+        } else if ([Some(&"vim")].contains(&format)) {
+            icon = "\u{e62b}  ".to_string();
+        } else if ([Some(&"twig")].contains(&format)) {
+            icon = "\u{e61c}  ".to_string();
+        } else if ([Some(&"ts")].contains(&format)) {
+            icon = "\u{e628}  ".to_string();
+        } else if ([Some(&"tex")].contains(&format)) {
+            icon = "\u{e600}  ".to_string();
+        } else if ([Some(&"sqlite3")].contains(&format)) {
+            icon = "\u{e7c4}  ".to_string();
+        } else if ([Some(&"scala")].contains(&format)) {
+            icon = "\u{e737}  ".to_string();
+        } else if ([Some(&"sass")].contains(&format)) {
+            icon = "\u{e603}  ".to_string();
+        } else if ([Some(&"rss")].contains(&format)) {
+            icon = "\u{f09e}  ".to_string();
+        } else if ([Some(&"rdb")].contains(&format)) {
+            icon = "\u{e76d}  ".to_string();
+        } else if ([Some(&"psd")].contains(&format)) {
+            icon = "\u{e7b8}  ".to_string();
+        } else if ([Some(&"pl")].contains(&format)) {
+            icon = "\u{e769}  ".to_string();
+        } else if ([Some(&"php")].contains(&format)) {
+            icon = "\u{e73d}  ".to_string();
+        } else if ([Some(&"pdf")].contains(&format)) {
+            icon = "\u{f1c1}  ".to_string();
+        } else if ([Some(&"npmignore")].contains(&format)) {
+            icon = "\u{e71e}  ".to_string();
+        } else if ([Some(&"mustache")].contains(&format)) {
+            icon = "\u{e60f}  ".to_string();
+        } else if ([Some(&"lua")].contains(&format)) {
+            icon = "\u{e620}  ".to_string();
+        } else if ([Some(&"log")].contains(&format)) {
+            icon = "\u{f18d}  ".to_string();
+        } else if ([Some(&"less")].contains(&format)) {
+            icon = "\u{e758}  ".to_string();
+        } else if ([Some(&"js")].contains(&format)) {
+            icon = "\u{e74e}  ".to_string();
+        } else if ([Some(&"iml")].contains(&format)) {
+            icon = "\u{e7b5}  ".to_string();
+        } else if ([Some(&"html")].contains(&format)) {
+            icon = "\u{f13b}  ".to_string();
+        } else if ([Some(&"go")].contains(&format)) {
+            icon = "\u{e626}  ".to_string();
+        } else if ([Some(&"gform")].contains(&format)) {
+            icon = "\u{f298}  ".to_string();
+        } else if ([Some(&"erl")].contains(&format)) {
+            icon = "\u{e7b1}  ".to_string();
+        } else if ([Some(&"ai")].contains(&format)) {
+            icon = "\u{e7b4}  ".to_string();
+        } else if ([Some(&"avro")].contains(&format)) {
+            icon = "\u{e60b}  ".to_string();
+        } else if ([Some(&"c")].contains(&format)) {
+            icon = "\u{e61e}  ".to_string();
+        } else if ([Some(&"clj")].contains(&format)) {
+            icon = "\u{e768}  ".to_string();
+        } else if ([Some(&"coffee")].contains(&format)) {
+            icon = "\u{f0f4}  ".to_string();
+        } else if ([Some(&"cpp")].contains(&format)) {
+            icon = "\u{e61d}  ".to_string();
+        } else if ([Some(&"d")].contains(&format)) {
+            icon = "\u{e7af}  ".to_string();
+        } else if ([Some(&"dart")].contains(&format)) {
+            icon = "\u{e798}  ".to_string();
+        } else if ([Some(&"db")].contains(&format)) {
+            icon = "\u{f1c0}  ".to_string();
+        } else if ([Some(&"diff")].contains(&format)) {
+            icon = "\u{f440}  ".to_string();
+        } else if ([Some(&"env"), Some(&"config")].contains(&format)) {
+            icon = "\u{f462}  ".to_string();
+        } else {
+            icon = "\u{f15b}  ".to_string();
+        }
+
+        escape(icon + &self.file.name.clone(), &mut bits, file_style, self.colours.control_char());
+
+        // let row_string = row.strings().to_string();
+        // writeln!(w, "{}", icon + &row_string)?
+
+        // escape(icon + &self.file.name.clone(), &mut bits, file_style, self.colours.control_char());
         bits
     }
 

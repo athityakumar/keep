@@ -114,8 +114,8 @@ impl Colours {
             scale: scale,
 
             filekinds: FileKinds {
-                normal:       Style::default(),
-                directory:    Blue.bold(),
+                normal:       Green.normal(),
+                directory:    Blue.normal(),
                 symlink:      Cyan.normal(),
                 pipe:         Yellow.normal(),
                 block_device: Yellow.bold(),

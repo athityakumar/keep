@@ -165,6 +165,9 @@ impl<'a> Render<'a> {
             self.add_files_to_table(&mut table, &mut rows, &self.files, ignore, TreeDepth::root());
 
             for row in self.iterate_with_table(table.unwrap(), rows) {
+                // let mut icon = "\u{f115}".to_string();
+                // let row_string = row.strings().to_string();
+                // writeln!(w, "{}", icon + &row_string)?
                 writeln!(w, "{}", row.strings())?
             }
         }

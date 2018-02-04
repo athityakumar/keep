@@ -1,5 +1,5 @@
 use ansi_term::Style;
-use ansi_term::Colour::{Red, Green, Yellow, Blue, Cyan, Purple, Fixed};
+use ansi_term::Colour::{Red, Green, Yellow, Blue, Cyan, Fixed};
 
 use output::render;
 use output::file_name::Colours as FileNameColours;
@@ -139,8 +139,8 @@ impl Colours {
                 other_write:         Red.normal(),
                 other_execute:       Green.normal(),
 
-                special_user_file:   Purple.normal(),
-                special_other:       Purple.normal(),
+                special_user_file:   Green.normal(),
+                special_other:       Green.normal(),
 
                 attribute:           Style::default(),
             },
@@ -176,12 +176,12 @@ impl Colours {
                 modified:    Blue.normal(),
                 deleted:     Red.normal(),
                 renamed:     Yellow.normal(),
-                typechange:  Purple.normal(),
+                typechange:  Green.normal(),
             },
 
             punctuation:  Fixed(244).normal(),
             date:         Blue.normal(),
-            inode:        Purple.normal(),
+            inode:        Green.normal(),
             blocks:       Cyan.normal(),
             header:       Style::default().underline(),
 
